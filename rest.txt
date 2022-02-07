@@ -1,0 +1,225 @@
+package org.arpit.java2blog.bean;
+
+ 
+public class Student
+{
+ 
+    
+	int id;
+    
+	String Name,DOB,DOJ;
+	
+    
+ 
+    
+	public Student() 
+	{
+        
+		super();
+    
+	}
+    
+	public Student(int i, String Name,String DOB, String DOJ) 
+	{
+        
+		super();
+        
+		this.id = i;
+        
+		this.Name = Name;
+        
+		this.DOB=DOB;
+	
+		this.DOJ=DOJ;
+    
+	}
+    
+	public int getId() 
+	{
+        
+		return id;
+    
+	}
+    
+	public void setId(int id) 
+	{
+        
+		this.id = id;
+    
+	}
+    
+	public String getName() 
+	{
+        
+		return Name;
+    
+	}
+    
+	public void setName(String Name) 
+	{
+        
+		this.Name = Name;
+    
+	}
+    
+	public String getDOB() 
+	{
+        
+		return DOB;
+    
+	}
+    
+	public void setDOB(String DOB) 
+	{
+        
+		this.DOB = DOB;
+    
+	}
+    
+	public String getDOJ() 
+	{
+        
+		return DOJ;
+    
+	}
+    
+	public void setDOJ(String DOJ) 
+	{
+        
+		this.DOJ = DOJ;
+    
+	}
+ 
+
+}
+
+
+
+package org.arpit.java2blog.controller;
+ 
+import java.util.List;
+import org.arpit.java2blog.bean.Student;
+import org.arpit.java2blog.service.StudentService;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+ 
+@RestController
+public class StudentController {
+ 
+    StudentService studentService = new StudentService();
+ 
+    @RequestMapping(value = "/students", method = RequestMethod.GET, headers = "Accept=application/json")
+    public List getStudents() {
+        List listOfStudents = studentService.getAllStudents();
+        return listOfStudents;
+    }
+ 
+    @RequestMapping(value = "/student/{id}", method = RequestMethod.GET, headers = "Accept=application/json")
+    public Country getStudentById(@PathVariable int id) {
+        return countryService.getCountry(id);
+    }
+ 
+    @RequestMapping(value = "/students", method = RequestMethod.POST, headers = "Accept=application/json")
+    public Student addStudent(@RequestBody Student student{
+        return studentService.addStudent(student);
+    }
+ 
+    @RequestMapping(value = "/students", method = RequestMethod.PUT, headers = "Accept=application/json")
+    public Student updateStudent(@RequestBody Student student) {
+        return studentService.updateStudent(student);
+ 
+    }
+ 
+    @RequestMapping(value = "/student/{id}", method = RequestMethod.DELETE, headers = "Accept=application/json")
+    public void deleteStudent(@PathVariable("id") int id) {
+        studentService.deleteStudent(id);
+ 
+    }
+}
+
+
+
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+ 
+import org.arpit.java2blog.bean.Student;
+ 
+/*
+ * It is just a helper class which should be replaced by database implementation.
+ * It is not very well written class, it is just used for demonstration.
+ */
+public class StudentService {
+ 
+    static HashMap<Integer,Student> countryIdMap=getStudentIdMap();
+ 
+    public StudentService() {
+        super();
+ 
+        if(studentIdMap==null)
+        {
+            studentIdMap=new HashMap<Integer,Student>();
+            // Creating some objects of Studentwhile initializing
+            Student aStudent=new Student(1, "Shital",21/9/1999,2/4/2016);
+            Country bStudent=new Student(4, "Neha",17/1/2000,5/8/2015);
+            Country cStudent=new Student(3, "Harshad",13/5/1999,9/10/2016);
+            Country dStudent=new Student(2, "Shlok",9/9/1999,11/11/2016);
+ 
+            countryIdMap.put(1,aStudent);
+            countryIdMap.put(4,bStudent);
+            countryIdMap.put(3,cStudent);
+            countryIdMap.put(2,dStudent);
+        }
+    }
+ 
+    public List getAllStudents()
+    {
+        List students = new ArrayList(studentIdMap.values());
+        return students;
+    }
+ 
+    public Student getStudent(int id)
+    {
+        Student student= studentIdMap.get(id);
+        return student;
+    }
+    public Student addStudent(Student student)
+    {
+   student.setId(getMaxId()+1);
+        studentIdMap.put(student.getId(), student);
+        return student;
+    }
+ 
+    public Student updateStudent(Student student)
+    {
+        if(student.getId()<=0)
+            return null;
+        studentIdMap.put(student.getId(), student);
+        return student;
+ 
+    }
+    public void deleteStudent(int id)
+    {
+        studentIdMap.remove(id);
+    }
+ 
+    public static HashMap<Integer, Student> getStudentIdMap() {
+        return studentIdMap;
+    }
+ 
+    // Utility method to get max id
+    public static int getMaxId()
+    { int max=0;
+    for (int id:studentIdMap.keySet()) {
+        if(max<=id)
+            max=id;
+ 
+    }
+    return max;
+    }
+}
+ 
